@@ -2,15 +2,18 @@ package br.edu.utfpr.usandodb
 
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.SimpleCursorAdapter
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import br.edu.utfpr.usandodb.database.DatabaseHandler
 import br.edu.utfpr.usandodb.databinding.ActivityListarBinding
 
 class ListarActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityListarBinding
+    private lateinit var banco: DatabaseHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,14 +27,17 @@ class ListarActivity : AppCompatActivity() {
             insets
         }
 
-        //origem dos dados
-        val registros = listOf<String>( "Brasil", "Marrocos", "Haiti", "Escocia" )
+        banco = DatabaseHandler(this)
 
+        val registros = banco.listarCursor()
 
-        val adapter = ArrayAdapter<String>(
+        val adapter = SimpleCursorAdapter(
             this,
-            android.R.layout.simple_list_item_1,
-            registros
+            android.R.layout.simple_list_item_2,
+            registros,
+            arrayOf( "nome", "telefone" ),
+            intArrayOf( android.R.id.text1, android.R.id.text2 ),
+            0
         )
 
         binding.lvCadastro.adapter = adapter
