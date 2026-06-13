@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         banco = SQLiteDatabase.openOrCreateDatabase(
-            this.getDatabasePath(DB_NAME),
+            this.getDatabasePath(DATABASE_NAME),
             null
         )
 
@@ -167,7 +167,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val DB_NAME = "banco.db"
+        private const val DATABASE_NAME = "banco.db"
+        private const val DATABASE_VERSION = 1
         private const val TABLE_NAME = "cadastro"
         private const val ID = 0
         private const val NOME = 1
