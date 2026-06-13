@@ -26,7 +26,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
     }
 
 
-    private fun incluir(cadastro: Cadastro) {
+    fun incluir(cadastro: Cadastro) {
 
         val banco = this.writableDatabase
 
@@ -37,7 +37,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         banco.insert( TABLE_NAME, null, registro )
     }
 
-    private fun alterar(cadastro: Cadastro) {
+    fun alterar(cadastro: Cadastro) {
 
         val banco = this.writableDatabase
 
@@ -54,26 +54,26 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
 
     }
 
-    private fun excluir(id: Int) {
+    fun excluir(id: Int) {
 
         val banco = this.writableDatabase
 
         banco.delete(
             TABLE_NAME,
-            "_id = ${id}",
+            "_id = $id",
             null
         )
 
     }
 
-    private fun pesquisar(id: Int): Cadastro? {
+    fun pesquisar(id: Int): Cadastro? {
 
         val banco = this.writableDatabase
 
         val registros = banco.query(
             TABLE_NAME,
             null,
-            "_id = ${id}",
+            "_id = $id",
             null,
             null,
             null,
@@ -87,18 +87,21 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                 registros.getString( NOME ),
                 registros.getString( TELEFONE )
             )
+            registros.close()
 
             return cadastro
 
         } else {
+            registros.close()
+
             return null
         }
 
-        registros.close()
+
 
     }
 
-    private fun listar(): MutableList<Cadastro> {
+    fun listar(): MutableList<Cadastro> {
 
         val banco = this.writableDatabase
 
@@ -130,7 +133,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         return saida
     }
 
-    private fun listarCursor(): Cursor {
+    fun listarCursor(): Cursor {
 
         val banco = this.writableDatabase
 
