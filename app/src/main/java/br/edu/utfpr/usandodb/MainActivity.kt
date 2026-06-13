@@ -1,5 +1,6 @@
 package br.edu.utfpr.usandodb
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -135,7 +136,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun listar() {
 
-        val registros = banco.listar()
+        val intent = Intent(this, ListarActivity::class.java)
+        startActivity( intent )
+
+        /*val registros = banco.listar()
 
         val saida = StringBuilder()
 
@@ -148,7 +152,7 @@ class MainActivity : AppCompatActivity() {
             this,
             saida.toString(),
             Toast.LENGTH_LONG
-        ).show()
+        ).show()*/
 
     }
 }
