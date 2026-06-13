@@ -3,7 +3,6 @@ package br.edu.utfpr.usandodb
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -82,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         banco.update(
             TABLE_NAME,
             registro,
-            "_id = ${binding.etCod.text.toString()}",
+            "_id = ${binding.etCod.text}",
             null
         )
 
@@ -99,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
         banco.delete(
             TABLE_NAME,
-            "_id = ${binding.etCod.text.toString()}",
+            "_id = ${binding.etCod.text}",
             null
         )
 
@@ -116,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         val registros = banco.query(
             TABLE_NAME,
             null,
-            "_id = ${binding.etCod.text.toString()}",
+            "_id = ${binding.etCod.text}",
             null,
             null,
             null,
@@ -133,6 +132,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             ).show()
         }
+
+        registros.close()
 
     }
 
@@ -160,6 +161,8 @@ class MainActivity : AppCompatActivity() {
             saida.toString(),
             Toast.LENGTH_LONG
         ).show()
+
+        registros.close()
 
     }
 
