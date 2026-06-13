@@ -69,8 +69,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun alterar() {
+        val id = binding.etCod.text.toString().toIntOrNull()
+
+        if (id == null) {
+            binding.etCod.error = "Digite um código válido"
+            return
+        }
+
         val cadastro = Cadastro(
-            binding.etCod.text.toString().toInt(),
+            id,
             binding.etNome.text.toString(),
             binding.etTelefone.text.toString()
         )
@@ -87,8 +94,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun excluir() {
+        val id = binding.etCod.text.toString().toIntOrNull()
 
-        banco.excluir( binding.etCod.text.toString().toInt() )
+        if (id == null) {
+            binding.etCod.error = "Digite um código válido"
+            return
+        }
+
+        banco.excluir( id )
 
         Toast.makeText(
             this,
@@ -99,8 +112,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun pesquisar() {
+        val id = binding.etCod.text.toString().toIntOrNull()
 
-        val cadastro = banco.pesquisar( binding.etCod.text.toString().toInt() )
+        if (id == null) {
+            binding.etCod.error = "Digite um código válido"
+            return
+        }
+
+        val cadastro = banco.pesquisar( id )
 
         if( cadastro != null ) {
             binding.etNome.setText( cadastro.nome )
