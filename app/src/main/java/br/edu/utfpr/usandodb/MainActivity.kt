@@ -1,5 +1,6 @@
 package br.edu.utfpr.usandodb
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -13,11 +14,15 @@ import androidx.core.view.WindowInsetsCompat
 import br.edu.utfpr.usandodb.database.DatabaseHandler
 import br.edu.utfpr.usandodb.databinding.ActivityMainBinding
 import br.edu.utfpr.usandodb.entity.Cadastro
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var banco: DatabaseHandler
+
+    val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +63,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun alterar() {
+
+        val cadastro = hashMapOf(
+            "nome" to binding.etNome.text.toString(),
+            "telefone" to binding.etTelefone.text.toString(),
+        )
+
+
+        db
+            .collection( "cadastro" )
+            .document(binding.etCod.text.toString())
+            .set( cadastro )
+            .addOnSuccessListener {
+                Toast.makeText(
+                    this,
+                    "Operação efetuada com sucesso!",
+                    Toast.LENGTH_LONG
+                ).show()
+                finish()
+            }
+            .addOnFailureListener { e->
+                Toast.makeText( this, "Erro ${e.message}", Toast.LENGTH_LONG ).show()
+            }
+
+
+        /*
         val id = binding.etCod.text.toString().toIntOrNull()
 
         if (id == null) {
@@ -81,6 +111,9 @@ class MainActivity : AppCompatActivity() {
             "Operação efetuada com sucesso!",
             Toast.LENGTH_LONG
         ).show()
+         */
+
+
 
         finish()
 
@@ -88,7 +121,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun excluir() {
-        val id = binding.etCod.text.toString().toIntOrNull()
+
+        db
+            .collection( "cadastro" )
+            .document(binding.etCod.text.toString())
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(
+                    this,
+                    "Operação efetuada com sucesso!",
+                    Toast.LENGTH_LONG
+                ).show()
+                finish()
+            }
+            .addOnFailureListener { e->
+                Toast.makeText( this, "Erro ${e.message}", Toast.LENGTH_LONG ).show()
+            }
+
+
+        /*val id = binding.etCod.text.toString().toIntOrNull()
 
         if (id == null) {
             binding.etCod.error = "Digite um código válido"
@@ -103,6 +154,8 @@ class MainActivity : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
 
+
+         */
         finish()
     }
 
@@ -116,12 +169,27 @@ class MainActivity : AppCompatActivity() {
         dialog.setNegativeButton( "Fechar", null )
         dialog.setPositiveButton( "Pesquisar", { dialog, which ->
 
+
             val id = etCodPesquisa.text.toString().toIntOrNull()
 
             if (id == null) {
                 Toast.makeText(this, "Código deve ser informado...", Toast.LENGTH_LONG ).show()
             } else {
 
+                db
+                    .collection("cadastro")
+                    .document(id.toString())
+                    .get()
+                    .addOnSuccessListener { result ->
+                        binding.etCod.setText(etCodPesquisa.text.toString())
+                        binding.etNome.setText( result.get("nome").toString() )
+                        binding.etTelefone.setText(result.get("telefone").toString())
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Erro ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+
+                /*
                 val cadastro = banco.pesquisar(id)
 
                 if (cadastro != null) {
@@ -135,6 +203,8 @@ class MainActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                 }
+
+                 */
             }
 
 

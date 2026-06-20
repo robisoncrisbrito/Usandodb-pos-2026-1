@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="br.edu.utfpr.usandodb" />
+                  <option name="mobileSdkAppId" value="1:970179652892:android:23f80dc6f74d5c5964ded9" />
+                  <option name="projectId" value="usandodb-pos-moveis-202601" />
+                  <option name="projectNumber" value="970179652892" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
