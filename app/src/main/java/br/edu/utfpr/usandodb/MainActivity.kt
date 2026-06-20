@@ -3,8 +3,10 @@ package br.edu.utfpr.usandodb
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -105,25 +107,57 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun pesquisar() {
-        val id = binding.etCod.text.toString().toIntOrNull()
 
-        if (id == null) {
-            binding.etCod.error = "Digite um código válido"
-            return
+        val etCodPesquisa = EditText( this )
+
+        val dialog = AlertDialog.Builder(this)
+        dialog.setTitle("Informe o código da pessoa")
+        dialog.setCancelable(false)
+        dialog.setNegativeButton( "Fechar", null )
+        dialog.setPositiveButton( "Pesquisar", { dialog, which ->
+
+            val id = etCodPesquisa.text.toString().toIntOrNull()
+
+            if (id == null) {
+                Toast.makeText(this, "Código deve ser informado...", Toast.LENGTH_LONG ).show()
+            } else {
+
+                val cadastro = banco.pesquisar(id)
+
+                if (cadastro != null) {
+                    binding.etCod.setText(etCodPesquisa.text.toString())
+                    binding.etNome.setText(cadastro.nome)
+                    binding.etTelefone.setText(cadastro.telefone)
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Registro não encontrado",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+
         }
+        )
 
-        val cadastro = banco.pesquisar( id )
 
-        if( cadastro != null ) {
-            binding.etNome.setText( cadastro.nome )
-            binding.etTelefone.setText( cadastro.telefone )
-        } else {
-            Toast.makeText(
-                this,
-                "Registro não encontrado",
-                Toast.LENGTH_LONG
-            ).show()
-        }
+
+
+        dialog.setView(etCodPesquisa)
+        dialog.show()
+
+
+
+
+
+
+        /*
+
+
+
+
+         */
     }
 
 }
