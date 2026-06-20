@@ -79,6 +79,12 @@ class MainActivity : AppCompatActivity() {
                 banco.alterar(cadastro)
             }
 
+            Toast.makeText(
+                this@MainActivity,
+                "Operação executada com sucesso.",
+                Toast.LENGTH_LONG
+            ).show()
+
             finish()
         }
 
@@ -94,6 +100,12 @@ class MainActivity : AppCompatActivity() {
             } else {
 
                 banco.excluir(id)
+
+                Toast.makeText(
+                    this@MainActivity,
+                    "Exclusão efetuada com sucesso.",
+                    Toast.LENGTH_LONG
+                ).show()
 
                 finish()
             }
@@ -119,7 +131,6 @@ class MainActivity : AppCompatActivity() {
 
                 lifecycleScope.launch {
 
-
                     val cadastro = banco.pesquisar(id)
 
                     if (cadastro != null) {
@@ -127,7 +138,11 @@ class MainActivity : AppCompatActivity() {
                         binding.etNome.setText(cadastro.nome)
                         binding.etTelefone.setText(cadastro.telefone)
                     } else {
-
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Pessoa não encontrada...",
+                            Toast.LENGTH_LONG
+                        ).show()
 
                     }
 

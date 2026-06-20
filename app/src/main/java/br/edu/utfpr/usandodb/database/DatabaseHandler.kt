@@ -15,6 +15,13 @@ class DatabaseHandler(context: Context) {
 
     private val banco = Firebase.firestore
 
+    companion object {
+        private const val TABLE_NAME = "cadastro"
+        private const val ID = "id"
+        private const val NOME = "nome"
+        private const val TELEFONE = "telefone"
+    }
+
     suspend fun incluir(cadastro: Cadastro) {
 
         val registro = hashMapOf(
@@ -96,14 +103,6 @@ class DatabaseHandler(context: Context) {
 
         return lista
 
-    }
-
-
-    companion object {
-        private const val TABLE_NAME = "cadastro"
-        private const val ID = "id"
-        private const val NOME = "nome"
-        private const val TELEFONE = "telefone"
     }
 
 } //fim do DatabaseHandler
