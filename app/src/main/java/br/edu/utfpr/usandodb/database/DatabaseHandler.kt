@@ -5,160 +5,105 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.widget.Toast
 import br.edu.utfpr.usandodb.entity.Cadastro
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.tasks.await
 
-class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class DatabaseHandler(context: Context) {
 
-    override fun onCreate(bd: SQLiteDatabase?) {
-        bd?.execSQL( "CREATE TABLE IF NOT EXISTS " +
-                "${TABLE_NAME}( _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "nome TEXT, telefone TEXT) "
-        )
-    }
+    private val banco = Firebase.firestore
 
-    override fun onUpgrade(
-        bd: SQLiteDatabase?,
-        oldVersion: Int,
-        newVerson: Int
-    ) {
-        bd?.execSQL( "DROP TABLE IF EXISTS $TABLE_NAME")
-        onCreate(bd)
-    }
+    suspend fun incluir(cadastro: Cadastro) {
 
-
-    fun incluir(cadastro: Cadastro) {
-
-        val banco = this.writableDatabase
-
-        val registro = ContentValues()
-        registro.put( "nome", cadastro.nome )
-        registro.put( "telefone", cadastro.telefone )
-
-        banco.insert( TABLE_NAME, null, registro )
-    }
-
-    fun alterar(cadastro: Cadastro) {
-
-        val banco = this.writableDatabase
-
-        val registro = ContentValues()
-        registro.put( "nome", cadastro.nome )
-        registro.put( "telefone", cadastro.telefone )
-
-        banco.update(
-            TABLE_NAME,
-            registro,
-            "_id = ${cadastro.id}",
-            null
+        val registro = hashMapOf(
+            NOME to cadastro.nome,
+            TELEFONE to cadastro.telefone
         )
 
+        banco
+            .collection( TABLE_NAME )
+            .document(cadastro.id.toString())
+            .set( registro )
+            .await()
     }
 
-    fun excluir(id: Int) {
+    suspend fun alterar(cadastro: Cadastro) {
 
-        val banco = this.writableDatabase
-
-        banco.delete(
-            TABLE_NAME,
-            "_id = $id",
-            null
+        val registro = hashMapOf(
+            NOME to cadastro.nome,
+            TELEFONE to cadastro.telefone
         )
+
+        banco
+            .collection( TABLE_NAME )
+            .document(cadastro.id.toString())
+            .set( registro )
+            .await()
 
     }
 
-    fun pesquisar(id: Int): Cadastro? {
 
-        val banco = this.writableDatabase
+    suspend fun excluir(id: Int) {
 
-        val registros = banco.query(
-            TABLE_NAME,
-            null,
-            "_id = $id",
-            null,
-            null,
-            null,
-            null
-        )
+        banco
+            .collection( TABLE_NAME )
+            .document(id.toString())
+            .delete()
+            .await()
 
-        if( registros.moveToNext() ) {
+    }
 
+    suspend fun pesquisar(id: Int): Cadastro? {
+
+        val documento = banco
+            .collection(TABLE_NAME)
+            .document(id.toString())
+            .get()
+            .await()
+
+        if (documento.exists()) {
             val cadastro = Cadastro(
-                registros.getInt( ID ),
-                registros.getString( NOME ),
-                registros.getString( TELEFONE )
+                id,
+                documento.get(NOME).toString(),
+                documento.get(TELEFONE).toString()
             )
-            registros.close()
-
             return cadastro
-
         } else {
-            registros.close()
-
             return null
         }
 
-
-
     }
 
-    fun listar(): MutableList<Cadastro> {
+    suspend fun listar(): MutableList<Cadastro> {
 
-        val banco = this.writableDatabase
+        val documentos = banco
+            .collection(TABLE_NAME)
+            .get()
+            .await()
 
-        val registros = banco.query(
-            TABLE_NAME,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
+        val lista = mutableListOf<Cadastro>()
 
-        val saida = mutableListOf<Cadastro>()
-
-        while( registros.moveToNext() ) {
-
+        for (documento in documentos) {
             val cadastro = Cadastro(
-                registros.getInt( ID ),
-                registros.getString( NOME ),
-                registros.getString( TELEFONE )
+                documento.id.toInt(),
+                documento.get(NOME).toString(),
+                documento.get(TELEFONE).toString()
             )
-
-            saida.add( cadastro )
+            lista.add(cadastro)
         }
 
-        registros.close()
+        return lista
 
-        return saida
     }
-
-    fun listarCursor(): Cursor {
-
-        val banco = this.writableDatabase
-
-        val registros = banco.query(
-            TABLE_NAME,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
-
-        return registros
-    }
-
 
 
     companion object {
-        private const val DATABASE_NAME = "banco.db"
-        private const val DATABASE_VERSION = 1
         private const val TABLE_NAME = "cadastro"
-        private const val ID = 0
-        private const val NOME = 1
-        private const val TELEFONE = 2
+        private const val ID = "id"
+        private const val NOME = "nome"
+        private const val TELEFONE = "telefone"
     }
 
 } //fim do DatabaseHandler

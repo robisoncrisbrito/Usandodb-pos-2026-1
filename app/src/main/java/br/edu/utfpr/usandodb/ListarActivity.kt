@@ -8,9 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import br.edu.utfpr.usandodb.adapter.ElementoListaAdapter
 import br.edu.utfpr.usandodb.database.DatabaseHandler
 import br.edu.utfpr.usandodb.databinding.ActivityListarBinding
+import kotlinx.coroutines.launch
 
 class ListarActivity : AppCompatActivity() {
 
@@ -41,14 +43,17 @@ class ListarActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        val registros = banco.listar()
+        lifecycleScope.launch {
 
-        val adapter = ElementoListaAdapter(
-            this,
-            registros
-        )
+            val registros = banco.listar()
 
-        binding.lvCadastro.adapter = adapter
+            val adapter = ElementoListaAdapter(
+                this@ListarActivity,
+                registros
+            )
+
+            binding.lvCadastro.adapter = adapter
+        }
     }
 
 
