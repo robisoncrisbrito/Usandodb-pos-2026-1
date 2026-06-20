@@ -1,13 +1,16 @@
 package br.edu.utfpr.usandodb.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import br.edu.utfpr.usandodb.MainActivity
 import br.edu.utfpr.usandodb.R
 import br.edu.utfpr.usandodb.entity.Cadastro
 
@@ -42,7 +45,7 @@ class ElementoListaAdapter(val context: Context, val registros: MutableList<Cada
         val tvNomeElementoLista: TextView = v.findViewById(R.id.tvNomeElementoLista)
         val tvTelefoneElementoLista: TextView = v.findViewById(R.id.tvTelefoneElementoLista)
         val imageView: ImageView = v.findViewById(R.id.imageView)
-        val btEditarElementoLista: ImageView = v.findViewById(R.id.btEditarElementoLista)
+        val btEditarElementoLista: ImageButton = v.findViewById(R.id.btEditarElementoLista)
 
         tvNomeElementoLista.text = registros[pos].nome
         tvTelefoneElementoLista.text = registros[pos].telefone
@@ -54,11 +57,11 @@ class ElementoListaAdapter(val context: Context, val registros: MutableList<Cada
         }
 
         btEditarElementoLista.setOnClickListener {
-            Toast.makeText(
-                context,
-                "clique em $pos",
-                Toast.LENGTH_LONG
-            ).show()
+            val intent = Intent( context, MainActivity::class.java )
+            intent.putExtra( "id", registros[pos].id )
+            intent.putExtra( "nome", registros[pos].nome )
+            intent.putExtra( "telefone", registros[pos].telefone )
+            context.startActivity( intent )
         }
 
         return v

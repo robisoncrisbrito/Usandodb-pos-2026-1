@@ -30,9 +30,12 @@ class MainActivity : AppCompatActivity() {
 
         banco = DatabaseHandler(this)
 
-        binding.btIncluir.setOnClickListener {
-            incluir()
+        if ( intent.getIntExtra( "id", 0 ) > 0 ) {
+            binding.etCod.setText( intent.getIntExtra( "id", 0 ).toString() )
+            binding.etNome.setText( intent.getStringExtra( "nome" ) )
+            binding.etTelefone.setText( intent.getStringExtra( "telefone" ) )
         }
+
 
         binding.btAlterar.setOnClickListener {
             alterar()
@@ -46,50 +49,34 @@ class MainActivity : AppCompatActivity() {
             pesquisar()
         }
 
-        binding.btListar.setOnClickListener {
-            listar()
-        }
-
-    }
-
-    private fun incluir() {
-
-        val cadastro = Cadastro(
-            0,
-            binding.etNome.text.toString(),
-            binding.etTelefone.text.toString()
-        )
-
-        banco.incluir( cadastro )
-
-        Toast.makeText(
-            this,
-            "Inclusão efetuada com sucesso!",
-            Toast.LENGTH_LONG
-        ).show()
     }
 
     private fun alterar() {
         val id = binding.etCod.text.toString().toIntOrNull()
 
         if (id == null) {
-            binding.etCod.error = "Digite um código válido"
-            return
+            val cadastro = Cadastro(
+                0,
+                binding.etNome.text.toString(),
+                binding.etTelefone.text.toString()
+            )
+            banco.incluir( cadastro )
+        } else {
+            val cadastro = Cadastro(
+                id,
+                binding.etNome.text.toString(),
+                binding.etTelefone.text.toString()
+            )
+            banco.alterar(cadastro)
         }
-
-        val cadastro = Cadastro(
-            id,
-            binding.etNome.text.toString(),
-            binding.etTelefone.text.toString()
-        )
-
-        banco.alterar( cadastro )
 
         Toast.makeText(
             this,
-            "Alteração efetuada com sucesso!",
+            "Operação efetuada com sucesso!",
             Toast.LENGTH_LONG
         ).show()
+
+        finish()
 
 
     }
@@ -110,6 +97,7 @@ class MainActivity : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
 
+        finish()
     }
 
     private fun pesquisar() {
@@ -134,25 +122,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun listar() {
-
-        val intent = Intent(this, ListarActivity::class.java)
-        startActivity( intent )
-
-        /*val registros = banco.listar()
-
-        val saida = StringBuilder()
-
-        registros.forEach { cadastro ->
-            saida.append( cadastro.nome )
-            saida.append( "\n" )
-        }
-
-        Toast.makeText(
-            this,
-            saida.toString(),
-            Toast.LENGTH_LONG
-        ).show()*/
-
-    }
 }
